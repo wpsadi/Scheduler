@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import {  useState } from 'react'
 import { Eye, EyeOff, Github, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,19 +8,39 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
-
+import { useAuthStore } from '@/store/(auth)/useAuth'
+import { useToast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
 export default function SigninPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const {toast} = useToast()
+  const router = useRouter()
+
+  const {signin} = useAuthStore();
 
   const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    let signinSuccess = true;
+    await signin(email,password).catch((e)=>{
+      signinSuccess=false;
+      toast({
+      title:"Error",
+      description : e.message ||"Something wrong happened",
+      variant:"destructive"
+    })}
+   
+  )
+
     setIsLoading(false)
+
+    if (signinSuccess){
+      router.push("/")
+    }
     // Handle signin logic here
     console.log('Signin with:', email, password)
   }
@@ -97,7 +117,7 @@ export default function SigninPage() {
             Continue with GitHub
           </Button>
           <div className="mt-4 text-center text-sm">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/sign-up" className="text-primary hover:underline">
               Sign up
             </Link>

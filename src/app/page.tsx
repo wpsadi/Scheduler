@@ -1,9 +1,32 @@
+"use client"
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, Clock, Users, Zap } from 'lucide-react'
+import { useUser } from '@/store/user/useUserStore'
+import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
+  const {isLoggedIn,loadingUserFinished,loadingUserStated,userId} = useUser()
+  const router = useRouter();
+
+  console.log(isLoggedIn,loadingUserFinished,loadingUserStated,userId)
+
+  if (!(loadingUserStated && loadingUserFinished)) {
+    return (
+      <div className="dark min-h-screen bg-background text-foreground">
+        <div className="container mx-auto px-4 py-6 text-center">
+          <p>Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (isLoggedIn && userId !==null) {
+    return router.push("/dashboard/orgs")
+  }
+
+
   return (
     <div className="dark min-h-screen bg-background text-foreground">
       <header className="container mx-auto px-4 py-6">

@@ -92,8 +92,8 @@ export function OtpVerification() {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            <p>Purpose: {purpose}</p>
-            <p>Identification Phrase: {phrase}</p>
+            <p>Purpose: <span className='underline'>{purpose}</span></p>
+            <p>Identification Phrase: <span className='font-bold'>{phrase}</span></p>
           </div>
         </CardContent>
       </Card>

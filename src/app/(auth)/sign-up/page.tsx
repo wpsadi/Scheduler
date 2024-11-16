@@ -8,21 +8,66 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
+import { useToast } from '@/hooks/use-toast'
+import { useAuthStore } from '@/store/(auth)/useAuth'
+import { useUser } from '@/store/user/useUserStore'
+import { useRouter } from 'next/navigation'
 
 export default function SignupPage() {
+  const {toast} = useToast();
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const {signup} = useAuthStore();
+  const router = useRouter();
+  const {isLoggedIn} = useUser();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    setIsLoading(false)
-    // Handle signup logic here
-    console.log('Signup with:', email, password)
+
+    let signUpSuccess = false;
+    let securityPhrase = "";
+    await signup(email,password,"User").then((e)=>{
+      signUpSuccess = true;
+
+      securityPhrase = e;
+    }).catch((e)=>{
+      console.log(e)
+      toast({
+        title:"Error",
+        description:e.message,
+        variant:"destructive"
+      })
+
+    }).finally(()=>{
+      setIsLoading(false)
+      if (isLoggedIn){
+        toast({
+          title:"Success",
+           description:"Account created successfully",
+          variant:"default"
+        })
+        
+        
+      }
+      
+     
+    
+    })
+
+    console.log(signUpSuccess)
+
+    if (!signUpSuccess){
+      return;
+    }
+
+    // Redirect to email verification page
+    router.push(`/verify-recovery-code?phrase=${securityPhrase}&purpose=Account Creation Verification`)
+  
+
   }
 
   return (

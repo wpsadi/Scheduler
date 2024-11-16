@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, Plus, Calendar, ArrowLeft } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 interface Schedule {
   id: string
@@ -15,7 +16,8 @@ interface Schedule {
 export default function ListSchedules({ params }: { params: { orgId: string } }) {
   const [schedules, setSchedules] = useState<Schedule[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const { orgId } = params
+  const { orgId } = params;
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -55,7 +57,9 @@ export default function ListSchedules({ params }: { params: { orgId: string } })
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {schedules.map((schedule) => (
-            <Card key={schedule.id} className="bg-[#1A1A1A] border-gray-800">
+            <Card key={schedule.id} className="bg-[#1A1A1A] border-gray-800" onClick={()=>{
+              router.push(`/dashboard/orgs/${orgId}/${schedule.id}`)
+            }}>
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-white flex items-center">
                   <Calendar className="mr-2 h-5 w-5" />

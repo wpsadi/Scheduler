@@ -242,3 +242,5 @@ export function AccessManagement() {
     </div>
   )
 }
+
+export default AccessManagement;
